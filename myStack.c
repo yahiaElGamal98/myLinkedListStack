@@ -77,7 +77,7 @@ uint8_t pull(void)
    if (NULL==gpstr_head)   //no elements in stack
    {
       printf("Stack empty, Nothing to pull!\n");
-      return EMPTY_STACK;
+      return NULL;
    }
    else 
    {
