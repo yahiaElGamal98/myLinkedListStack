@@ -32,7 +32,7 @@ int main(void)
 {
    uint8_t u8arr_test[30];    //array for custom test cases
    printf("First test case : { 1+( 2/5 )+2 }\n\n");
-   printf("%s\n", balancedParentheses("{ 1+( 2/5 )+2 }"));
+   printf("%s\n", balancedParentheses("{1+(2/5)+2}"));
    printf("Second Test case : (2*3 + ( 5/2 + ( 4*3 )))\n\n");
    printf("%s\n", balancedParentheses("(2*3 + ( 5/2 + ( 4*3 ))) "));
    printf("Third test case : { ( { 2+10 } }*11 }\n\n");
@@ -107,7 +107,9 @@ uint8_t* balancedParentheses(uint8_t* str)
       ,u8_countCurlyOpen=0    //variable to count open curly braces
       ,u8_countCurlyClosed=0    //variable to count closed curly braces
       ,u8_countRoundOpen=0    //variable to count open round braces
-      ,u8_countRoundClosed=0;    //variable to count closed round braces
+      ,u8_countRoundClosed=0   //variable to count closed round braces
+      ,u8_prevElement=0
+      ,u8_parenFlag=0;   
    for (u8_strIndex = 0; str[u8_strIndex]!='\0'; u8_strIndex++)
    {
       push(str[u8_strIndex]);    //push element by element into stack
@@ -118,22 +120,41 @@ uint8_t* balancedParentheses(uint8_t* str)
       if ('{' == u8_temp)     //check which braces type it holds if any
       {
          u8_countCurlyOpen++;
+         if (u8_prevElement == ')')
+         {
+            u8_parenFlag=1;
+         }
+         else
+         {
+            u8_prevElement = 0;
+         }
       }
       else if ('}' == u8_temp)
       {
          u8_countCurlyClosed++;
+         u8_prevElement = u8_temp;
       }
       else if ('(' == u8_temp)
       {
          u8_countRoundOpen++;
+         if (u8_prevElement == '}')
+         {
+            u8_parenFlag=1;
+         }
+         else
+         {
+            u8_prevElement = 0;
+         }
       }
       else if (')' == u8_temp)
       {
          u8_countRoundClosed++;
+         u8_prevElement = u8_temp;
       }
    }
    if ((u8_countCurlyClosed == u8_countCurlyOpen)     // a balanced parenthesis must have as many open braces of each type as there are closed 
       && (u8_countRoundClosed == u8_countRoundOpen)
+      &&(!u8_parenFlag)
       &&(NULL==gpstr_head))      // and we check we already searched for all of braces by assuring we popped all stack elements
    {
       return "Balanced Parentheses\n";
